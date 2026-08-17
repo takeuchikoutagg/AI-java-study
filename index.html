@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タスク管理アプリ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <h1 class="app-header__title">マイボード</h1>
+  <button type="button" class="btn btn--primary" data-action="open-add-list">+ リストを追加</button>
+</header>
+
+<main id="board" class="board"></main>
+
+<!-- リスト追加モーダル -->
+<dialog id="list-modal" class="modal">
+  <form id="list-form" class="modal__form">
+    <h2>リストを追加</h2>
+    <label class="modal__field">
+      リスト名
+      <input type="text" id="list-name-input" required maxlength="30" autocomplete="off">
+    </label>
+    <div class="modal__actions">
+      <button type="button" class="btn" data-action="close-modal" data-target="list-modal">キャンセル</button>
+      <button type="submit" class="btn btn--primary">追加</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- カード追加・編集モーダル -->
+<dialog id="card-modal" class="modal">
+  <form id="card-form" class="modal__form">
+    <h2 id="card-modal-heading">カードを追加</h2>
+    <input type="hidden" id="card-modal-mode">
+    <input type="hidden" id="card-modal-list-id">
+    <input type="hidden" id="card-modal-card-id">
+
+    <label class="modal__field">
+      タイトル
+      <input type="text" id="card-title-input" required maxlength="100" autocomplete="off">
+    </label>
+    <label class="modal__field">
+      期限
+      <input type="date" id="card-due-date-input">
+    </label>
+    <label class="modal__field">
+      優先度
+      <select id="card-priority-input">
+        <option value="">未設定</option>
+        <option value="high">高</option>
+        <option value="medium">中</option>
+        <option value="low">低</option>
+      </select>
+    </label>
+
+    <div class="modal__actions">
+      <button type="button" class="btn" data-action="close-modal" data-target="card-modal">キャンセル</button>
+      <button type="submit" class="btn btn--primary" id="card-form-submit">追加</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 汎用削除確認モーダル -->
+<dialog id="confirm-modal" class="modal">
+  <div class="modal__form">
+    <h2 id="confirm-modal-heading">削除の確認</h2>
+    <p id="confirm-modal-message"></p>
+    <div class="modal__actions">
+      <button type="button" class="btn" data-action="close-modal" data-target="confirm-modal">キャンセル</button>
+      <button type="button" class="btn btn--danger" id="confirm-modal-ok">削除する</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="script.js"></script>
+</body>
+</html>
