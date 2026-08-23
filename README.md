@@ -18,6 +18,11 @@ index.html / script.js / style.css
             … 素のHTML/CSS/JSで作った初期プロトタイプ（現行のReact+Spring Boot版に移行する前のもの。参考用に残置）
 ```
 
+## 起動方法
+
+- バックエンド: `backend/start.sh`（ポート8080が使用中の場合は既存プロセスを停止してから `./gradlew bootRun` を起動）
+- フロントエンド: `frontend/start.sh`（ポート5173が使用中の場合は既存プロセスを停止してから `npm run dev` を起動）
+
 ## ドキュメント
 
 詳細な要件定義（画面一覧・ユースケース・ER図・非機能要件・技術スタックなど）は [要件定義.md](./要件定義.md) を参照。
