@@ -1,0 +1,21 @@
+.page {
+  padding: 24px;
+  text-align: left;
+}
+
+.boardName {
+  font-size: 22px;
+  margin: 0 0 20px;
+}
+
+.columns {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.status {
+  padding: 24px;
+  color: var(--text);
+}
