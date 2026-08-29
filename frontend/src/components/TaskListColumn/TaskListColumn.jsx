@@ -55,7 +55,7 @@ function TaskListColumn({ list, onAddCard }) {
           <input
             className={styles.input}
             type="text"
-            placeholder="カードのタイトル"
+            placeholder="タスクのタイトル"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             autoFocus
@@ -88,7 +88,7 @@ function TaskListColumn({ list, onAddCard }) {
         </form>
       ) : (
         <button className={styles.addButton} onClick={() => setIsAdding(true)}>
-          + カードを追加
+          + タスクを追加
         </button>
       )}
     </section>
