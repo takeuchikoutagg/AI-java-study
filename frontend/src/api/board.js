@@ -13,7 +13,7 @@ export async function createCard(listId, card) {
     body: JSON.stringify(card),
   })
   if (!response.ok) {
-    throw new Error(`カードの追加に失敗しました (status: ${response.status})`)
+    throw new Error(`タスクの追加に失敗しました (status: ${response.status})`)
   }
   return response.json()
 }
