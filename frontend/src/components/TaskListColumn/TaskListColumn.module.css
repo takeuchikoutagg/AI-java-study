@@ -21,3 +21,75 @@
   flex-direction: column;
   gap: 8px;
 }
+
+.addButton {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background: var(--bg);
+}
+
+.addForm {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.error {
+  margin: 0;
+  font-size: 12px;
+  color: #e53935;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.submitButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cancelButton {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
