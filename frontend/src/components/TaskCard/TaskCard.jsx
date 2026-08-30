@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import Modal from '../Modal/Modal.jsx'
 import styles from './TaskCard.module.css'
 
@@ -14,12 +16,23 @@ const PRIORITY_CLASS = {
   LOW: styles.priorityLow,
 }
 
-function TaskCard({ card, onUpdateCard }) {
+function TaskCard({ card, listId, onUpdateCard }) {
   const [editingField, setEditingField] = useState(null)
   const [priority, setPriority] = useState(card.priority ?? '')
   const [dueDate, setDueDate] = useState(card.dueDate ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: `card-${card.id}`,
+    data: { listId, cardId: card.id },
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
 
   const openPriorityModal = () => {
     setPriority(card.priority ?? '')
@@ -54,8 +67,19 @@ function TaskCard({ card, onUpdateCard }) {
   }
 
   return (
-    <li className={styles.card}>
-      <p className={styles.title}>{card.title}</p>
+    <li ref={setNodeRef} style={style} className={styles.card}>
+      <div className={styles.cardHeader}>
+        <p className={styles.title}>{card.title}</p>
+        <button
+          type="button"
+          className={styles.dragHandle}
+          aria-label="ドラッグして並べ替え"
+          {...attributes}
+          {...listeners}
+        >
+          ⠿
+        </button>
+      </div>
       {(card.dueDate || card.priority) && (
         <div className={styles.meta}>
           {card.dueDate && <span className={styles.dueDate}>{card.dueDate}</span>}

@@ -29,3 +29,15 @@ export async function updateCard(cardId, card) {
   }
   return response.json()
 }
+
+export async function moveCard(cardId, { listId, position }) {
+  const response = await fetch(`/api/cards/${cardId}/position`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ listId, position }),
+  })
+  if (!response.ok) {
+    throw new Error(`タスクの並べ替えに失敗しました (status: ${response.status})`)
+  }
+  return response.json()
+}
