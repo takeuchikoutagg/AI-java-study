@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.CardCreateRequest;
+import com.example.backend.dto.CardMoveRequest;
 import com.example.backend.dto.CardResponse;
 import com.example.backend.dto.CardUpdateRequest;
 import com.example.backend.entity.Card;
@@ -8,6 +9,7 @@ import com.example.backend.entity.TaskList;
 import com.example.backend.repository.CardRepository;
 import com.example.backend.repository.TaskListRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class CardController {
@@ -57,5 +63,43 @@ public class CardController {
         Card saved = cardRepository.save(card);
 
         return CardResponse.from(saved);
+    }
+
+    @PatchMapping("/api/cards/{cardId}/position")
+    public CardResponse moveCard(@PathVariable Long cardId, @RequestBody CardMoveRequest request) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found"));
+
+        if (request.listId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "listId is required");
+        }
+        TaskList destinationList = taskListRepository.findById(request.listId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found"));
+
+        Long sourceListId = card.getList().getId();
+        boolean sameList = sourceListId.equals(destinationList.getId());
+
+        List<Card> destinationCards = cardRepository
+                .findByListIdOrderBySortOrderAsc(destinationList.getId()).stream()
+                .filter(c -> !c.getId().equals(cardId))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        int position = Math.max(0, Math.min(request.position(), destinationCards.size()));
+        destinationCards.add(position, card);
+
+        for (int i = 0; i < destinationCards.size(); i++) {
+            destinationCards.get(i).moveTo(destinationList, i);
+        }
+        cardRepository.saveAll(destinationCards);
+
+        if (!sameList) {
+            List<Card> sourceCards = cardRepository.findByListIdOrderBySortOrderAsc(sourceListId);
+            for (int i = 0; i < sourceCards.size(); i++) {
+                sourceCards.get(i).moveTo(sourceCards.get(i).getList(), i);
+            }
+            cardRepository.saveAll(sourceCards);
+        }
+
+        return CardResponse.from(card);
     }
 }

@@ -78,4 +78,9 @@ public class Card {
         this.dueDate = dueDate;
         this.priority = priority;
     }
+
+    public void moveTo(TaskList list, int sortOrder) {
+        this.list = list;
+        this.sortOrder = sortOrder;
+    }
 }

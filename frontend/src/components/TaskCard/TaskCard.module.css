@@ -12,6 +12,31 @@
   margin: 0;
   font-size: 14px;
   color: var(--text-h);
+  flex: 1;
+  word-break: break-word;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dragHandle {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  cursor: grab;
+  touch-action: none;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
 }
 
 .meta {

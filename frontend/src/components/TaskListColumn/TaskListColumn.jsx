@@ -1,8 +1,14 @@
 import { useState } from 'react'
+import { useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import TaskCard from '../TaskCard/TaskCard.jsx'
 import styles from './TaskListColumn.module.css'
 
 function TaskListColumn({ list, onAddCard, onUpdateCard }) {
+  const { setNodeRef } = useDroppable({
+    id: `list-${list.id}`,
+    data: { listId: list.id },
+  })
   const [isAdding, setIsAdding] = useState(false)
   const [title, setTitle] = useState('')
   const [dueDate, setDueDate] = useState('')
@@ -44,11 +50,16 @@ function TaskListColumn({ list, onAddCard, onUpdateCard }) {
   return (
     <section className={styles.column}>
       <h2 className={styles.title}>{list.name}</h2>
-      <ul className={styles.cards}>
-        {list.cards.map((card) => (
-          <TaskCard key={card.id} card={card} onUpdateCard={onUpdateCard} />
-        ))}
-      </ul>
+      <SortableContext
+        items={list.cards.map((card) => `card-${card.id}`)}
+        strategy={verticalListSortingStrategy}
+      >
+        <ul ref={setNodeRef} className={styles.cards}>
+          {list.cards.map((card) => (
+            <TaskCard key={card.id} card={card} listId={list.id} onUpdateCard={onUpdateCard} />
+          ))}
+        </ul>
+      </SortableContext>
 
       {isAdding ? (
         <form className={styles.addForm} onSubmit={handleSubmit}>
