@@ -15,16 +15,25 @@ const PRIORITY_CLASS = {
 }
 
 function TaskCard({ card, onUpdateCard }) {
-  const [isEditingPriority, setIsEditingPriority] = useState(false)
+  const [editingField, setEditingField] = useState(null)
   const [priority, setPriority] = useState(card.priority ?? '')
+  const [dueDate, setDueDate] = useState(card.dueDate ?? '')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
   const openPriorityModal = () => {
     setPriority(card.priority ?? '')
     setError(null)
-    setIsEditingPriority(true)
+    setEditingField('priority')
   }
+
+  const openDueDateModal = () => {
+    setDueDate(card.dueDate ?? '')
+    setError(null)
+    setEditingField('dueDate')
+  }
+
+  const closeModal = () => setEditingField(null)
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -33,10 +42,10 @@ function TaskCard({ card, onUpdateCard }) {
     try {
       await onUpdateCard(card.id, {
         title: card.title,
-        dueDate: card.dueDate,
-        priority: priority || null,
+        dueDate: editingField === 'dueDate' ? dueDate || null : card.dueDate,
+        priority: editingField === 'priority' ? priority || null : card.priority,
       })
-      setIsEditingPriority(false)
+      closeModal()
     } catch (err) {
       setError(err.message)
     } finally {
@@ -57,12 +66,17 @@ function TaskCard({ card, onUpdateCard }) {
           )}
         </div>
       )}
-      <button className={styles.editButton} onClick={openPriorityModal}>
-        優先度を変更
-      </button>
+      <div className={styles.editButtons}>
+        <button className={styles.editButton} onClick={openPriorityModal}>
+          優先度を変更
+        </button>
+        <button className={styles.editButton} onClick={openDueDateModal}>
+          期限を変更
+        </button>
+      </div>
 
-      {isEditingPriority && (
-        <Modal title="優先度を変更" onClose={() => setIsEditingPriority(false)}>
+      {editingField === 'priority' && (
+        <Modal title="優先度を変更" onClose={closeModal}>
           <form className={styles.editForm} onSubmit={handleSubmit}>
             <select
               className={styles.select}
@@ -80,13 +94,41 @@ function TaskCard({ card, onUpdateCard }) {
               <button type="submit" className={styles.submitButton} disabled={submitting}>
                 保存
               </button>
-              <button
-                type="button"
-                className={styles.cancelButton}
-                onClick={() => setIsEditingPriority(false)}
-              >
+              <button type="button" className={styles.cancelButton} onClick={closeModal}>
                 キャンセル
               </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {editingField === 'dueDate' && (
+        <Modal title="期限を変更" onClose={closeModal}>
+          <form className={styles.editForm} onSubmit={handleSubmit}>
+            <input
+              className={styles.select}
+              type="date"
+              value={dueDate}
+              onChange={(event) => setDueDate(event.target.value)}
+              autoFocus
+            />
+            {error && <p className={styles.error}>{error}</p>}
+            <div className={styles.actions}>
+              <button type="submit" className={styles.submitButton} disabled={submitting}>
+                保存
+              </button>
+              <button type="button" className={styles.cancelButton} onClick={closeModal}>
+                キャンセル
+              </button>
+              {dueDate && (
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={() => setDueDate('')}
+                >
+                  クリア
+                </button>
+              )}
             </div>
           </form>
         </Modal>
