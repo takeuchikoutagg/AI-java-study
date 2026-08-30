@@ -72,4 +72,10 @@ public class Card {
     public int getSortOrder() {
         return sortOrder;
     }
+
+    public void update(String title, LocalDate dueDate, Priority priority) {
+        this.title = title;
+        this.dueDate = dueDate;
+        this.priority = priority;
+    }
 }

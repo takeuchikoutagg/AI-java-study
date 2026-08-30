@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createCard, fetchBoard } from '../../api/board.js'
+import { createCard, fetchBoard, updateCard } from '../../api/board.js'
 import TaskListColumn from '../TaskListColumn/TaskListColumn.jsx'
 import styles from './Board.module.css'
 
@@ -22,6 +22,11 @@ function Board() {
     loadBoard()
   }
 
+  const handleUpdateCard = async (cardId, card) => {
+    await updateCard(cardId, card)
+    loadBoard()
+  }
+
   if (error) {
     return <p className={styles.status}>読み込みに失敗しました: {error}</p>
   }
@@ -35,7 +40,12 @@ function Board() {
       <h1 className={styles.boardName}>{board.name}</h1>
       <div className={styles.columns}>
         {board.lists.map((list) => (
-          <TaskListColumn key={list.id} list={list} onAddCard={handleAddCard} />
+          <TaskListColumn
+            key={list.id}
+            list={list}
+            onAddCard={handleAddCard}
+            onUpdateCard={handleUpdateCard}
+          />
         ))}
       </div>
     </div>

@@ -17,3 +17,15 @@ export async function createCard(listId, card) {
   }
   return response.json()
 }
+
+export async function updateCard(cardId, card) {
+  const response = await fetch(`/api/cards/${cardId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(card),
+  })
+  if (!response.ok) {
+    throw new Error(`タスクの更新に失敗しました (status: ${response.status})`)
+  }
+  return response.json()
+}
