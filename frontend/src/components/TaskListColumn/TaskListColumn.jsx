@@ -5,7 +5,7 @@ import Modal from '../Modal/Modal.jsx'
 import TaskCard from '../TaskCard/TaskCard.jsx'
 import styles from './TaskListColumn.module.css'
 
-function TaskListColumn({ list, onAddCard, onUpdateCard }) {
+function TaskListColumn({ list, onAddCard, onUpdateCard, onSortByPriority }) {
   const { setNodeRef } = useDroppable({
     id: `list-${list.id}`,
     data: { listId: list.id },
@@ -16,6 +16,18 @@ function TaskListColumn({ list, onAddCard, onUpdateCard }) {
   const [priority, setPriority] = useState('')
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [sorting, setSorting] = useState(false)
+
+  const handleSortByPriority = async () => {
+    setSorting(true)
+    try {
+      await onSortByPriority(list.id)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSorting(false)
+    }
+  }
 
   const resetForm = () => {
     setTitle('')
@@ -50,7 +62,16 @@ function TaskListColumn({ list, onAddCard, onUpdateCard }) {
 
   return (
     <section className={styles.column}>
-      <h2 className={styles.title}>{list.name}</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>{list.name}</h2>
+        <button
+          className={styles.sortButton}
+          onClick={handleSortByPriority}
+          disabled={sorting || list.cards.length === 0}
+        >
+          優先度順に並べ替え
+        </button>
+      </div>
       <SortableContext
         items={list.cards.map((card) => `card-${card.id}`)}
         strategy={verticalListSortingStrategy}

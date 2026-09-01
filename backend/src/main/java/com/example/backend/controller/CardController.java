@@ -5,6 +5,7 @@ import com.example.backend.dto.CardMoveRequest;
 import com.example.backend.dto.CardResponse;
 import com.example.backend.dto.CardUpdateRequest;
 import com.example.backend.entity.Card;
+import com.example.backend.entity.Priority;
 import com.example.backend.entity.TaskList;
 import com.example.backend.repository.CardRepository;
 import com.example.backend.repository.TaskListRepository;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,5 +103,33 @@ public class CardController {
         }
 
         return CardResponse.from(card);
+    }
+
+    @PatchMapping("/api/lists/{listId}/cards/sort-by-priority")
+    public List<CardResponse> sortByPriority(@PathVariable Long listId) {
+        TaskList list = taskListRepository.findById(listId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found"));
+
+        List<Card> sorted = cardRepository.findByListIdOrderBySortOrderAsc(listId).stream()
+                .sorted(Comparator.comparingInt(card -> priorityRank(card.getPriority())))
+                .toList();
+
+        for (int i = 0; i < sorted.size(); i++) {
+            sorted.get(i).moveTo(list, i);
+        }
+        cardRepository.saveAll(sorted);
+
+        return sorted.stream().map(CardResponse::from).toList();
+    }
+
+    private int priorityRank(Priority priority) {
+        if (priority == null) {
+            return 3;
+        }
+        return switch (priority) {
+            case HIGH -> 0;
+            case MEDIUM -> 1;
+            case LOW -> 2;
+        };
     }
 }
