@@ -52,4 +52,8 @@ public class TaskList {
     public int getSortOrder() {
         return sortOrder;
     }
+
+    public void changeSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 }
