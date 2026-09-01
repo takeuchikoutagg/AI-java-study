@@ -21,8 +21,15 @@
   text-align: left;
 }
 
-.sortButton {
+.headerActions {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.sortButton {
   padding: 0;
   border: none;
   background: transparent;
@@ -34,6 +41,37 @@
 
 .sortButton:disabled {
   opacity: 0.5;
+  cursor: default;
+}
+
+.deleteListButton {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #e53935;
+  font-size: 11px;
+  text-align: right;
+  cursor: pointer;
+}
+
+.confirmText {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+.deleteConfirmButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background: #e53935;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.deleteConfirmButton:disabled {
+  opacity: 0.6;
   cursor: default;
 }
 

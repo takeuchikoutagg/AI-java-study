@@ -5,7 +5,14 @@ import Modal from '../Modal/Modal.jsx'
 import TaskCard from '../TaskCard/TaskCard.jsx'
 import styles from './TaskListColumn.module.css'
 
-function TaskListColumn({ list, onAddCard, onUpdateCard, onDeleteCard, onSortByPriority }) {
+function TaskListColumn({
+  list,
+  onAddCard,
+  onUpdateCard,
+  onDeleteCard,
+  onDeleteList,
+  onSortByPriority,
+}) {
   const { setNodeRef } = useDroppable({
     id: `list-${list.id}`,
     data: { listId: list.id },
@@ -17,6 +24,9 @@ function TaskListColumn({ list, onAddCard, onUpdateCard, onDeleteCard, onSortByP
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [sorting, setSorting] = useState(false)
+  const [isDeletingList, setIsDeletingList] = useState(false)
+  const [deletingList, setDeletingList] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
 
   const handleSortByPriority = async () => {
     setSorting(true)
@@ -26,6 +36,18 @@ function TaskListColumn({ list, onAddCard, onUpdateCard, onDeleteCard, onSortByP
       console.error(err)
     } finally {
       setSorting(false)
+    }
+  }
+
+  const handleDeleteList = async () => {
+    setDeletingList(true)
+    setDeleteError(null)
+    try {
+      await onDeleteList(list.id)
+      setIsDeletingList(false)
+    } catch (err) {
+      setDeleteError(err.message)
+      setDeletingList(false)
     }
   }
 
@@ -64,13 +86,18 @@ function TaskListColumn({ list, onAddCard, onUpdateCard, onDeleteCard, onSortByP
     <section className={styles.column}>
       <div className={styles.header}>
         <h2 className={styles.title}>{list.name}</h2>
-        <button
-          className={styles.sortButton}
-          onClick={handleSortByPriority}
-          disabled={sorting || list.cards.length === 0}
-        >
-          優先度順に並べ替え
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            className={styles.sortButton}
+            onClick={handleSortByPriority}
+            disabled={sorting || list.cards.length === 0}
+          >
+            優先度順に並べ替え
+          </button>
+          <button className={styles.deleteListButton} onClick={() => setIsDeletingList(true)}>
+            リストを削除
+          </button>
+        </div>
       </div>
       <SortableContext
         items={list.cards.map((card) => `card-${card.id}`)}
@@ -130,6 +157,32 @@ function TaskListColumn({ list, onAddCard, onUpdateCard, onDeleteCard, onSortByP
               </button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {isDeletingList && (
+        <Modal title="リストを削除" onClose={() => setIsDeletingList(false)}>
+          <p className={styles.confirmText}>
+            「{list.name}」を削除します。配下のタスクもすべて削除されます。よろしいですか？
+          </p>
+          {deleteError && <p className={styles.error}>{deleteError}</p>}
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.deleteConfirmButton}
+              onClick={handleDeleteList}
+              disabled={deletingList}
+            >
+              削除する
+            </button>
+            <button
+              type="button"
+              className={styles.cancelButton}
+              onClick={() => setIsDeletingList(false)}
+            >
+              キャンセル
+            </button>
+          </div>
         </Modal>
       )}
     </section>

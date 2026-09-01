@@ -3,6 +3,7 @@ import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from 
 import {
   createCard,
   deleteCard,
+  deleteList,
   fetchBoard,
   moveCard,
   sortListByPriority,
@@ -40,6 +41,11 @@ function Board() {
 
   const handleDeleteCard = async (cardId) => {
     await deleteCard(cardId)
+    loadBoard()
+  }
+
+  const handleDeleteList = async (listId) => {
+    await deleteList(listId)
     loadBoard()
   }
 
@@ -97,6 +103,7 @@ function Board() {
               onAddCard={handleAddCard}
               onUpdateCard={handleUpdateCard}
               onDeleteCard={handleDeleteCard}
+              onDeleteList={handleDeleteList}
               onSortByPriority={handleSortByPriority}
             />
           ))}
