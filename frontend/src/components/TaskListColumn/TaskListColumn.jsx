@@ -5,7 +5,7 @@ import Modal from '../Modal/Modal.jsx'
 import TaskCard from '../TaskCard/TaskCard.jsx'
 import styles from './TaskListColumn.module.css'
 
-function TaskListColumn({ list, onAddCard, onUpdateCard, onSortByPriority }) {
+function TaskListColumn({ list, onAddCard, onUpdateCard, onDeleteCard, onSortByPriority }) {
   const { setNodeRef } = useDroppable({
     id: `list-${list.id}`,
     data: { listId: list.id },
@@ -78,7 +78,13 @@ function TaskListColumn({ list, onAddCard, onUpdateCard, onSortByPriority }) {
       >
         <ul ref={setNodeRef} className={styles.cards}>
           {list.cards.map((card) => (
-            <TaskCard key={card.id} card={card} listId={list.id} onUpdateCard={onUpdateCard} />
+            <TaskCard
+              key={card.id}
+              card={card}
+              listId={list.id}
+              onUpdateCard={onUpdateCard}
+              onDeleteCard={onDeleteCard}
+            />
           ))}
         </ul>
       </SortableContext>

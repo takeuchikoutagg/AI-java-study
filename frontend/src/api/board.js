@@ -42,6 +42,15 @@ export async function moveCard(cardId, { listId, position }) {
   return response.json()
 }
 
+export async function deleteCard(cardId) {
+  const response = await fetch(`/api/cards/${cardId}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok) {
+    throw new Error(`タスクの削除に失敗しました (status: ${response.status})`)
+  }
+}
+
 export async function sortListByPriority(listId) {
   const response = await fetch(`/api/lists/${listId}/cards/sort-by-priority`, {
     method: 'PATCH',

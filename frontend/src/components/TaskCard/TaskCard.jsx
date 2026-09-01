@@ -16,7 +16,7 @@ const PRIORITY_CLASS = {
   LOW: styles.priorityLow,
 }
 
-function TaskCard({ card, listId, onUpdateCard }) {
+function TaskCard({ card, listId, onUpdateCard, onDeleteCard }) {
   const [editingField, setEditingField] = useState(null)
   const [priority, setPriority] = useState(card.priority ?? '')
   const [dueDate, setDueDate] = useState(card.dueDate ?? '')
@@ -46,7 +46,24 @@ function TaskCard({ card, listId, onUpdateCard }) {
     setEditingField('dueDate')
   }
 
+  const openDeleteModal = () => {
+    setError(null)
+    setEditingField('delete')
+  }
+
   const closeModal = () => setEditingField(null)
+
+  const handleDelete = async () => {
+    setSubmitting(true)
+    setError(null)
+    try {
+      await onDeleteCard(card.id)
+      closeModal()
+    } catch (err) {
+      setError(err.message)
+      setSubmitting(false)
+    }
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -96,6 +113,9 @@ function TaskCard({ card, listId, onUpdateCard }) {
         </button>
         <button className={styles.editButton} onClick={openDueDateModal}>
           期限を変更
+        </button>
+        <button className={styles.deleteButton} onClick={openDeleteModal}>
+          削除
         </button>
       </div>
 
@@ -155,6 +175,26 @@ function TaskCard({ card, listId, onUpdateCard }) {
               )}
             </div>
           </form>
+        </Modal>
+      )}
+
+      {editingField === 'delete' && (
+        <Modal title="タスクを削除" onClose={closeModal}>
+          <p className={styles.confirmText}>「{card.title}」を削除します。よろしいですか？</p>
+          {error && <p className={styles.error}>{error}</p>}
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.deleteConfirmButton}
+              onClick={handleDelete}
+              disabled={submitting}
+            >
+              削除する
+            </button>
+            <button type="button" className={styles.cancelButton} onClick={closeModal}>
+              キャンセル
+            </button>
+          </div>
         </Modal>
       )}
     </li>
