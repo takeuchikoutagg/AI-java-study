@@ -10,6 +10,7 @@ import com.example.backend.entity.TaskList;
 import com.example.backend.repository.CardRepository;
 import com.example.backend.repository.TaskListRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -103,6 +104,22 @@ public class CardController {
         }
 
         return CardResponse.from(card);
+    }
+
+    @DeleteMapping("/api/cards/{cardId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCard(@PathVariable Long cardId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found"));
+
+        Long listId = card.getList().getId();
+        cardRepository.delete(card);
+
+        List<Card> remaining = cardRepository.findByListIdOrderBySortOrderAsc(listId);
+        for (int i = 0; i < remaining.size(); i++) {
+            remaining.get(i).moveTo(remaining.get(i).getList(), i);
+        }
+        cardRepository.saveAll(remaining);
     }
 
     @PatchMapping("/api/lists/{listId}/cards/sort-by-priority")
