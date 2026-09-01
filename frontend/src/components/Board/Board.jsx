@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
-import { createCard, fetchBoard, moveCard, updateCard } from '../../api/board.js'
+import { createCard, fetchBoard, moveCard, sortListByPriority, updateCard } from '../../api/board.js'
 import TaskListColumn from '../TaskListColumn/TaskListColumn.jsx'
 import styles from './Board.module.css'
 
@@ -28,6 +28,11 @@ function Board() {
 
   const handleUpdateCard = async (cardId, card) => {
     await updateCard(cardId, card)
+    loadBoard()
+  }
+
+  const handleSortByPriority = async (listId) => {
+    await sortListByPriority(listId)
     loadBoard()
   }
 
@@ -79,6 +84,7 @@ function Board() {
               list={list}
               onAddCard={handleAddCard}
               onUpdateCard={handleUpdateCard}
+              onSortByPriority={handleSortByPriority}
             />
           ))}
         </div>

@@ -41,3 +41,13 @@ export async function moveCard(cardId, { listId, position }) {
   }
   return response.json()
 }
+
+export async function sortListByPriority(listId) {
+  const response = await fetch(`/api/lists/${listId}/cards/sort-by-priority`, {
+    method: 'PATCH',
+  })
+  if (!response.ok) {
+    throw new Error(`優先度順の並べ替えに失敗しました (status: ${response.status})`)
+  }
+  return response.json()
+}
