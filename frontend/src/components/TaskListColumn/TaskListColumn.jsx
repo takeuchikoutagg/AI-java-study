@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import Modal from '../Modal/Modal.jsx'
 import TaskCard from '../TaskCard/TaskCard.jsx'
 import styles from './TaskListColumn.module.css'
 
@@ -61,46 +62,48 @@ function TaskListColumn({ list, onAddCard, onUpdateCard }) {
         </ul>
       </SortableContext>
 
-      {isAdding ? (
-        <form className={styles.addForm} onSubmit={handleSubmit}>
-          <input
-            className={styles.input}
-            type="text"
-            placeholder="タスクのタイトル"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            autoFocus
-          />
-          <input
-            className={styles.input}
-            type="date"
-            value={dueDate}
-            onChange={(event) => setDueDate(event.target.value)}
-          />
-          <select
-            className={styles.input}
-            value={priority}
-            onChange={(event) => setPriority(event.target.value)}
-          >
-            <option value="">優先度なし</option>
-            <option value="HIGH">高</option>
-            <option value="MEDIUM">中</option>
-            <option value="LOW">低</option>
-          </select>
-          {error && <p className={styles.error}>{error}</p>}
-          <div className={styles.actions}>
-            <button type="submit" className={styles.submitButton} disabled={submitting}>
-              追加
-            </button>
-            <button type="button" className={styles.cancelButton} onClick={resetForm}>
-              キャンセル
-            </button>
-          </div>
-        </form>
-      ) : (
-        <button className={styles.addButton} onClick={() => setIsAdding(true)}>
-          + タスクを追加
-        </button>
+      <button className={styles.addButton} onClick={() => setIsAdding(true)}>
+        + タスクを追加
+      </button>
+
+      {isAdding && (
+        <Modal title="タスクを追加" onClose={resetForm}>
+          <form className={styles.addForm} onSubmit={handleSubmit}>
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="タスクのタイトル"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              autoFocus
+            />
+            <input
+              className={styles.input}
+              type="date"
+              value={dueDate}
+              onChange={(event) => setDueDate(event.target.value)}
+            />
+            <select
+              className={styles.input}
+              value={priority}
+              onChange={(event) => setPriority(event.target.value)}
+            >
+              <option value="">優先度なし</option>
+              <option value="HIGH">高</option>
+              <option value="MEDIUM">中</option>
+              <option value="LOW">低</option>
+            </select>
+            {error && <p className={styles.error}>{error}</p>}
+            <div className={styles.actions}>
+              <button type="submit" className={styles.submitButton} disabled={submitting}>
+                追加
+              </button>
+              <button type="button" className={styles.cancelButton} onClick={resetForm}>
+                キャンセル
+              </button>
+            </div>
+          </form>
+        </Modal>
       )}
     </section>
   )
