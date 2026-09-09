@@ -5,6 +5,7 @@ import com.example.backend.entity.TaskList;
 import com.example.backend.repository.CardRepository;
 import com.example.backend.repository.TaskListRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,6 +27,7 @@ public class TaskListController {
 
     @DeleteMapping("/api/lists/{listId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void deleteList(@PathVariable Long listId) {
         TaskList list = taskListRepository.findById(listId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found"));
