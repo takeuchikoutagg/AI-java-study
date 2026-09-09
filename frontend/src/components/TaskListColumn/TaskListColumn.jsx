@@ -129,6 +129,7 @@ function TaskListColumn({
               placeholder="タスクのタイトル"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
+              maxLength={255}
               autoFocus
             />
             <input

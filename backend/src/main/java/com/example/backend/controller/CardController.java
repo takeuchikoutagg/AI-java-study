@@ -9,6 +9,7 @@ import com.example.backend.entity.Priority;
 import com.example.backend.entity.TaskList;
 import com.example.backend.repository.CardRepository;
 import com.example.backend.repository.TaskListRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -38,13 +39,9 @@ public class CardController {
 
     @PostMapping("/api/lists/{listId}/cards")
     @ResponseStatus(HttpStatus.CREATED)
-    public CardResponse createCard(@PathVariable Long listId, @RequestBody CardCreateRequest request) {
+    public CardResponse createCard(@PathVariable Long listId, @Valid @RequestBody CardCreateRequest request) {
         TaskList list = taskListRepository.findById(listId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found"));
-
-        if (request.title() == null || request.title().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "title is required");
-        }
 
         int nextSortOrder = cardRepository.findByListIdOrderBySortOrderAsc(listId).size();
         Card card = new Card(list, request.title(), request.dueDate(), request.priority(), nextSortOrder);
@@ -54,13 +51,9 @@ public class CardController {
     }
 
     @PutMapping("/api/cards/{cardId}")
-    public CardResponse updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequest request) {
+    public CardResponse updateCard(@PathVariable Long cardId, @Valid @RequestBody CardUpdateRequest request) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found"));
-
-        if (request.title() == null || request.title().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "title is required");
-        }
 
         card.update(request.title(), request.dueDate(), request.priority());
         Card saved = cardRepository.save(card);
