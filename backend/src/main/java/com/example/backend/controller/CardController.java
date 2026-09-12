@@ -5,6 +5,7 @@ import com.example.backend.dto.CardMoveRequest;
 import com.example.backend.dto.CardResponse;
 import com.example.backend.dto.CardUpdateRequest;
 import com.example.backend.service.CardService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,17 +31,17 @@ public class CardController {
 
     @PostMapping("/lists/{listId}/cards")
     @ResponseStatus(HttpStatus.CREATED)
-    public CardResponse createCard(@PathVariable Long listId, @RequestBody CardCreateRequest request) {
+    public CardResponse createCard(@PathVariable Long listId, @Valid @RequestBody CardCreateRequest request) {
         return cardService.createCard(listId, request);
     }
 
     @PutMapping("/cards/{cardId}")
-    public CardResponse updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequest request) {
+    public CardResponse updateCard(@PathVariable Long cardId, @Valid @RequestBody CardUpdateRequest request) {
         return cardService.updateCard(cardId, request);
     }
 
     @PatchMapping("/cards/{cardId}/position")
-    public CardResponse moveCard(@PathVariable Long cardId, @RequestBody CardMoveRequest request) {
+    public CardResponse moveCard(@PathVariable Long cardId, @Valid @RequestBody CardMoveRequest request) {
         return cardService.moveCard(cardId, request);
     }
 
