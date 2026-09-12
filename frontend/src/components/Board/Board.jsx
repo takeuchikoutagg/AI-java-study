@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import {
   createCard,
+  createList,
   deleteCard,
   deleteList,
   fetchBoard,
@@ -9,6 +10,7 @@ import {
   sortListByPriority,
   updateCard,
 } from '../../api/board.js'
+import Modal from '../Modal/Modal.jsx'
 import TaskListColumn from '../TaskListColumn/TaskListColumn.jsx'
 import { computeDragMove } from './dragEnd.js'
 import styles from './Board.module.css'
@@ -17,6 +19,10 @@ function Board() {
   const [board, setBoard] = useState(null)
   const [error, setError] = useState(null)
   const [actionError, setActionError] = useState(null)
+  const [isAddingList, setIsAddingList] = useState(false)
+  const [listName, setListName] = useState('')
+  const [addListError, setAddListError] = useState(null)
+  const [submittingList, setSubmittingList] = useState(false)
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   )
@@ -54,6 +60,32 @@ function Board() {
   const handleSortByPriority = async (listId) => {
     await sortListByPriority(listId)
     loadBoard()
+  }
+
+  const resetAddListForm = () => {
+    setListName('')
+    setAddListError(null)
+    setIsAddingList(false)
+  }
+
+  const handleAddList = async (event) => {
+    event.preventDefault()
+    if (!listName.trim()) {
+      setAddListError('リスト名を入力してください')
+      return
+    }
+
+    setSubmittingList(true)
+    setAddListError(null)
+    try {
+      await createList(listName.trim())
+      loadBoard()
+      resetAddListForm()
+    } catch (err) {
+      setAddListError(err.message)
+    } finally {
+      setSubmittingList(false)
+    }
   }
 
   const handleDragEnd = async (event) => {
@@ -106,8 +138,34 @@ function Board() {
               onSortByPriority={handleSortByPriority}
             />
           ))}
+          <button className={styles.addListButton} onClick={() => setIsAddingList(true)}>
+            + リストを追加
+          </button>
         </div>
       </DndContext>
+
+      {isAddingList && (
+        <Modal title="リストを追加" onClose={resetAddListForm}>
+          <form className={styles.addListForm} onSubmit={handleAddList}>
+            <input
+              className={styles.addListInput}
+              type="text"
+              placeholder="リスト名"
+              value={listName}
+              onChange={(event) => setListName(event.target.value)}
+            />
+            {addListError && <p className={styles.addListErrorText}>{addListError}</p>}
+            <div className={styles.addListActions}>
+              <button type="submit" className={styles.addListSubmitButton} disabled={submittingList}>
+                追加
+              </button>
+              <button type="button" className={styles.addListCancelButton} onClick={resetAddListForm}>
+                キャンセル
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </div>
   )
 }

@@ -50,6 +50,18 @@ export function deleteCard(cardId) {
   return request(`/api/cards/${cardId}`, { method: 'DELETE' }, 'タスクの削除に失敗しました')
 }
 
+export function createList(name) {
+  return request(
+    '/api/lists',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    },
+    'リストの追加に失敗しました',
+  )
+}
+
 export function deleteList(listId) {
   return request(`/api/lists/${listId}`, { method: 'DELETE' }, 'リストの削除に失敗しました')
 }
