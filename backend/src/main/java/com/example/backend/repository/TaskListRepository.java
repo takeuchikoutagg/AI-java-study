@@ -8,4 +8,6 @@ import java.util.List;
 public interface TaskListRepository extends JpaRepository<TaskList, Long> {
 
     List<TaskList> findByBoardIdOrderBySortOrderAsc(Long boardId);
+
+    int countByBoardId(Long boardId);
 }
