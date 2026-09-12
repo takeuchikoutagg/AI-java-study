@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,21 +40,20 @@ public class BoardService {
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found"));
 
-        List<TaskListResponse> lists = taskListRepository
-                .findByBoardIdOrderBySortOrderAsc(board.getId())
-                .stream()
-                .map(this::toTaskListResponse)
+        List<TaskList> taskLists = taskListRepository.findByBoardIdOrderBySortOrderAsc(board.getId());
+        List<Long> listIds = taskLists.stream().map(TaskList::getId).toList();
+
+        Map<Long, List<CardResponse>> cardsByListId = cardRepository
+                .findByListIdInOrderBySortOrderAsc(listIds).stream()
+                .collect(Collectors.groupingBy(
+                        card -> card.getList().getId(),
+                        Collectors.mapping(CardResponse::from, Collectors.toList())));
+
+        List<TaskListResponse> lists = taskLists.stream()
+                .map(list -> TaskListResponse.from(
+                        list, cardsByListId.getOrDefault(list.getId(), List.of())))
                 .toList();
 
         return BoardResponse.from(board, lists);
-    }
-
-    private TaskListResponse toTaskListResponse(TaskList list) {
-        List<CardResponse> cards = cardRepository
-                .findByListIdOrderBySortOrderAsc(list.getId())
-                .stream()
-                .map(CardResponse::from)
-                .toList();
-        return TaskListResponse.from(list, cards);
     }
 }

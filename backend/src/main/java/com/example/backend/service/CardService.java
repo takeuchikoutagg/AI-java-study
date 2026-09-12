@@ -35,7 +35,7 @@ public class CardService {
         TaskList list = taskListRepository.findById(listId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found"));
 
-        int nextSortOrder = cardRepository.findByListIdOrderBySortOrderAsc(listId).size();
+        int nextSortOrder = cardRepository.countByListId(listId);
         Card card = new Card(list, request.title(), request.dueDate(), request.priority(), nextSortOrder);
         Card saved = cardRepository.save(card);
 
