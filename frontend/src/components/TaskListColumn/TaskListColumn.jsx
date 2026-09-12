@@ -24,30 +24,32 @@ function TaskListColumn({
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [sorting, setSorting] = useState(false)
-  const [isDeletingList, setIsDeletingList] = useState(false)
-  const [deletingList, setDeletingList] = useState(false)
+  const [sortError, setSortError] = useState(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
 
   const handleSortByPriority = async () => {
     setSorting(true)
+    setSortError(null)
     try {
       await onSortByPriority(list.id)
     } catch (err) {
-      console.error(err)
+      setSortError(err.message)
     } finally {
       setSorting(false)
     }
   }
 
   const handleDeleteList = async () => {
-    setDeletingList(true)
+    setIsDeleting(true)
     setDeleteError(null)
     try {
       await onDeleteList(list.id)
-      setIsDeletingList(false)
+      setIsDeleteModalOpen(false)
     } catch (err) {
       setDeleteError(err.message)
-      setDeletingList(false)
+      setIsDeleting(false)
     }
   }
 
@@ -94,11 +96,12 @@ function TaskListColumn({
           >
             優先度順に並べ替え
           </button>
-          <button className={styles.deleteListButton} onClick={() => setIsDeletingList(true)}>
+          <button className={styles.deleteListButton} onClick={() => setIsDeleteModalOpen(true)}>
             リストを削除
           </button>
         </div>
       </div>
+      {sortError && <p className={styles.error}>{sortError}</p>}
       <SortableContext
         items={list.cards.map((card) => `card-${card.id}`)}
         strategy={verticalListSortingStrategy}
@@ -160,8 +163,8 @@ function TaskListColumn({
         </Modal>
       )}
 
-      {isDeletingList && (
-        <Modal title="リストを削除" onClose={() => setIsDeletingList(false)}>
+      {isDeleteModalOpen && (
+        <Modal title="リストを削除" onClose={() => setIsDeleteModalOpen(false)}>
           <p className={styles.confirmText}>
             「{list.name}」を削除します。配下のタスクもすべて削除されます。よろしいですか？
           </p>
@@ -171,14 +174,14 @@ function TaskListColumn({
               type="button"
               className={styles.deleteConfirmButton}
               onClick={handleDeleteList}
-              disabled={deletingList}
+              disabled={isDeleting}
             >
               削除する
             </button>
             <button
               type="button"
               className={styles.cancelButton}
-              onClick={() => setIsDeletingList(false)}
+              onClick={() => setIsDeleteModalOpen(false)}
             >
               キャンセル
             </button>
