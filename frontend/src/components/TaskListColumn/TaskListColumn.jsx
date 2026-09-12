@@ -132,7 +132,6 @@ function TaskListColumn({
               placeholder="タスクのタイトル"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              autoFocus
             />
             <input
               className={styles.input}
@@ -164,7 +163,7 @@ function TaskListColumn({
       )}
 
       {isDeleteModalOpen && (
-        <Modal title="リストを削除" onClose={() => setIsDeleteModalOpen(false)}>
+        <Modal title="リストを削除" variant="alert" onClose={() => setIsDeleteModalOpen(false)}>
           <p className={styles.confirmText}>
             「{list.name}」を削除します。配下のタスクもすべて削除されます。よろしいですか？
           </p>

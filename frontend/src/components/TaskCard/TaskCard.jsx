@@ -138,7 +138,6 @@ function TaskCard({ card, listId, onUpdateCard, onDeleteCard }) {
               className={styles.select}
               value={priority}
               onChange={(event) => setPriority(event.target.value)}
-              autoFocus
             >
               <option value="">優先度なし</option>
               <option value="HIGH">高</option>
@@ -166,7 +165,6 @@ function TaskCard({ card, listId, onUpdateCard, onDeleteCard }) {
               type="date"
               value={dueDate}
               onChange={(event) => setDueDate(event.target.value)}
-              autoFocus
             />
             {error && <p className={styles.error}>{error}</p>}
             <div className={styles.actions}>
@@ -191,7 +189,7 @@ function TaskCard({ card, listId, onUpdateCard, onDeleteCard }) {
       )}
 
       {editingField === 'delete' && (
-        <Modal title="タスクを削除" onClose={closeModal}>
+        <Modal title="タスクを削除" variant="alert" onClose={closeModal}>
           <p className={styles.confirmText}>「{card.title}」を削除します。よろしいですか？</p>
           {error && <p className={styles.error}>{error}</p>}
           <div className={styles.actions}>
