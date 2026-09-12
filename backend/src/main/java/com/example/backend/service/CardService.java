@@ -35,10 +35,6 @@ public class CardService {
         TaskList list = taskListRepository.findById(listId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found"));
 
-        if (request.title() == null || request.title().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "title is required");
-        }
-
         int nextSortOrder = cardRepository.findByListIdOrderBySortOrderAsc(listId).size();
         Card card = new Card(list, request.title(), request.dueDate(), request.priority(), nextSortOrder);
         Card saved = cardRepository.save(card);
@@ -50,10 +46,6 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found"));
 
-        if (request.title() == null || request.title().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "title is required");
-        }
-
         card.update(request.title(), request.dueDate(), request.priority());
         Card saved = cardRepository.save(card);
 
@@ -64,9 +56,6 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found"));
 
-        if (request.listId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "listId is required");
-        }
         TaskList destinationList = taskListRepository.findById(request.listId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found"));
 
