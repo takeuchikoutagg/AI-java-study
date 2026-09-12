@@ -36,8 +36,7 @@ frontend/   … React + Vite製フロントエンド（現行）
 backend/    … Spring Boot（Gradle）製バックエンド（現行）
 docs/       … 要件定義の詳細ドキュメント
 .claude/    … Claude Code向けの設定・プロジェクトスキル
-index.html / script.js / style.css
-            … 素のHTML/CSS/JSで作った初期プロトタイプ（現行のReact+Spring Boot版に移行する前のもの。参考用に残置）
+legacy/     … 素のHTML/CSS/JSで作った初期プロトタイプ（現行のReact+Spring Boot版に移行する前のもの。参考用に残置）
 ```
 
 ## セットアップ・起動方法
