@@ -28,7 +28,7 @@ public class TaskListService {
 
         Long boardId = list.getBoard().getId();
 
-        cardRepository.deleteAll(cardRepository.findByListIdOrderBySortOrderAsc(listId));
+        cardRepository.deleteByListId(listId);
         taskListRepository.delete(list);
 
         List<TaskList> remaining = taskListRepository.findByBoardIdOrderBySortOrderAsc(boardId);
