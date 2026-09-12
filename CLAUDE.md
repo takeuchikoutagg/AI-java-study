@@ -4,7 +4,7 @@
 
 ## プロジェクト概要
 
-Trelloを参考にした個人用タスク管理アプリ。技術スタックはReact（Vite）+ Spring Boot（Java）。詳細は [README.md](./README.md) および [要件定義.md](./要件定義.md) を参照。
+Trelloを参考にした個人用タスク管理アプリ。技術スタックはReact（Vite）+ Spring Boot（Java）。詳細は [README.md](./README.md) および [docs/要件定義.md](./docs/要件定義.md) を参照。
 
 ## 起動コマンド
 
