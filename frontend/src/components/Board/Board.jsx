@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import {
   createCard,
@@ -10,24 +10,26 @@ import {
   updateCard,
 } from '../../api/board.js'
 import TaskListColumn from '../TaskListColumn/TaskListColumn.jsx'
+import { computeDragMove } from './dragEnd.js'
 import styles from './Board.module.css'
 
 function Board() {
   const [board, setBoard] = useState(null)
   const [error, setError] = useState(null)
+  const [actionError, setActionError] = useState(null)
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   )
 
-  const loadBoard = () => {
+  const loadBoard = useCallback(() => {
     fetchBoard()
       .then(setBoard)
       .catch((err) => setError(err.message))
-  }
+  }, [])
 
   useEffect(() => {
     loadBoard()
-  }, [])
+  }, [loadBoard])
 
   const handleAddCard = async (listId, card) => {
     await createCard(listId, card)
@@ -55,31 +57,15 @@ function Board() {
   }
 
   const handleDragEnd = async (event) => {
-    const { active, over } = event
-    if (!over) return
+    const move = computeDragMove(event, board)
+    if (!move) return
 
-    const activeData = active.data.current
-    const overData = over.data.current
-    if (!activeData || !overData) return
-
-    const destList = board.lists.find((list) => list.id === overData.listId)
-    const sourceList = board.lists.find((list) => list.id === activeData.listId)
-    if (!destList || !sourceList) return
-
-    const destCards = destList.cards.filter((card) => card.id !== activeData.cardId)
-    const overIndex = overData.cardId != null
-      ? destCards.findIndex((card) => card.id === overData.cardId)
-      : -1
-    const position = overIndex === -1 ? destCards.length : overIndex
-
-    const currentIndex = sourceList.cards.findIndex((card) => card.id === activeData.cardId)
-    if (sourceList.id === destList.id && currentIndex === position) return
-
+    setActionError(null)
     try {
-      await moveCard(activeData.cardId, { listId: destList.id, position })
+      await moveCard(move.cardId, { listId: move.listId, position: move.position })
       loadBoard()
     } catch (err) {
-      console.error(err)
+      setActionError(err.message)
     }
   }
 
@@ -94,6 +80,19 @@ function Board() {
   return (
     <div className={styles.page}>
       <h1 className={styles.boardName}>{board.name}</h1>
+      {actionError && (
+        <p className={styles.actionError}>
+          {actionError}
+          <button
+            type="button"
+            className={styles.actionErrorClose}
+            onClick={() => setActionError(null)}
+            aria-label="閉じる"
+          >
+            ×
+          </button>
+        </p>
+      )}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <div className={styles.columns}>
           {board.lists.map((list) => (

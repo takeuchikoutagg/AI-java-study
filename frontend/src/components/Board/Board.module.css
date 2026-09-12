@@ -19,3 +19,28 @@
   padding: 24px;
   color: var(--text);
 }
+
+.actionError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border: 1px solid #e53935;
+  border-radius: 6px;
+  background: rgba(229, 57, 53, 0.08);
+  color: #e53935;
+  font-size: 14px;
+}
+
+.actionErrorClose {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #e53935;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}

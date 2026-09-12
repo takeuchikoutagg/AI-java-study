@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import Modal from '../Modal/Modal.jsx'
@@ -34,14 +34,26 @@ function TaskCard({ card, listId, onUpdateCard, onDeleteCard }) {
     opacity: isDragging ? 0.5 : 1,
   }
 
+  // モーダルを開いている間にboardが再取得されてcard propが更新された場合も、
+  // 表示中のフォーム値を最新のpropに追従させる（開いた瞬間だけの同期だと古い値が残る）。
+  useEffect(() => {
+    if (editingField === 'priority') {
+      setPriority(card.priority ?? '')
+    }
+  }, [card.priority, editingField])
+
+  useEffect(() => {
+    if (editingField === 'dueDate') {
+      setDueDate(card.dueDate ?? '')
+    }
+  }, [card.dueDate, editingField])
+
   const openPriorityModal = () => {
-    setPriority(card.priority ?? '')
     setError(null)
     setEditingField('priority')
   }
 
   const openDueDateModal = () => {
-    setDueDate(card.dueDate ?? '')
     setError(null)
     setEditingField('dueDate')
   }
